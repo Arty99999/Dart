@@ -37,7 +37,8 @@ uint32_t reset_count = 0;
 uint8_t Auto_state=0;		//自动模式核心标志位
 uint8_t Reset_flag = 0;
 int m11;  
-uint8_t flag_yaw_stop=0;
+uint8_t flag_yaw_stop=0,mode,shot_complete;
+uint16_t cnt_complete;
 uint8_t flag_pitch_stop=0;
 uint8_t flag_shoot=10;
 //uint8_t flag_shoot=10;
@@ -105,8 +106,9 @@ static int cnt_up_stop=0,cnt_shoot=0,cnt_yaw_stop=0,cnt_reset=0,cnt_pitch_stop=0
 //{flag_2006=1;cnt_2=0;Target_Angle_2006=motor2006.motor[0].Data.TotalAngle;}	
 				
 	if  (rc_Ctrl_et.rc.s1==3) m11=0;
-	else if (rc_Ctrl_et.rc.s1==2) m11=-6000;
+	else if (rc_Ctrl_et.rc.s1==2) m11=-5000;
 	else if (rc_Ctrl_et.rc.s1==1) m11=7000;
+			
 //消堵转	
 	if  (rc_Ctrl_et.rc.s2==1 && rc_Ctrl_et.rc.s2_last==3&& flag_stop==1) flag_stop=0;
 
@@ -512,6 +514,19 @@ for (int j=0;j<check_robot_state.Check_Can2.size_Offline;j++)
 	
 	MotorCanOutput(can2, 0x1FF);
 	MotorCanOutput(can1, 0x1FF);
+				
+				
+				
+				if (shot_complete==1) cnt_complete++;
+					if (cnt_complete>1500) {shot_complete=2;cnt_complete=0;}
+				if (shot_complete==2) {		if (Rubber_state== Rubber_IDLE ||Rubber_state== Rubber_COMPLETE)
+	{Rubber_state= Rubber_STEP1;flag_stop=0;}
+		flag_completely=1;
+		b22=495;shot_complete=3;}
+				
+	if (shot_complete==3 && Rubber_state==Rubber_COMPLETE&& Reload_state ==RELOAD_COMPLETE) {if (flag_shoot==10) flag_shoot=17;else flag_shoot=10;shot_complete=0;}
+				
+				
 		if (tim14.ClockTime%30==0)
 		servo_move(0xFE,100,b22);
 	//Usart1DmaPrintf("%d,%d,%d\r\n",motor6020.motor[0].Data.RawEcd,motor6020.motor[0].Data.LastEcd,motor6020.motor[0].Data.RoundCnt);
@@ -615,6 +630,8 @@ uint8_t LCD_callback(uint8_t * recBuffer, uint16_t len)
 	}	
 	else if (recBuffer[0]==0x55&&recBuffer[1]==0x01 &&recBuffer[2]==0x00 &&recBuffer[3]==0x04) //Yaw Pitch 复位
 	{
+		
+		
 		flag_reset=1;
 		
 		
@@ -622,16 +639,24 @@ uint8_t LCD_callback(uint8_t * recBuffer, uint16_t len)
 	}
 	else if (recBuffer[0]==0x55&&recBuffer[1]==0x01 &&recBuffer[2]==0x01 &&recBuffer[3]==0x00) //闸门正在开启
 	{
-//			if (Rubber_state== Rubber_IDLE ||Rubber_state== Rubber_COMPLETE)
-//	{Rubber_state= Rubber_STEP1;flag_stop=0;}
+		mode++;
 		
+		if (mode==1)	{if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
+		else if (mode==2) 	
+		{		
+	if (Rubber_state== Rubber_IDLE ||Rubber_state== Rubber_COMPLETE)
+	{Rubber_state= Rubber_STEP1;flag_stop=0;}
+		flag_completely=1;
+		b22=495;
+
+	}
 		
 		
 	}
 		else if (recBuffer[0]==0x55&&recBuffer[1]==0x01 &&recBuffer[2]==0x01 &&recBuffer[3]==0x01) //闸门开启
 	{
-		//if (Rubber_state==Rubber_COMPLETE) {if (flag_shoot==10) flag_shoot=17;else flag_shoot=10;
-		
+		if (mode==1 &&Rubber_state==Rubber_COMPLETE) {if (flag_shoot==10) flag_shoot=17;else flag_shoot=10;shot_complete=1;}
+		if (mode==2 &&Rubber_state==Rubber_COMPLETE) {if (flag_shoot==10) flag_shoot=17;else flag_shoot=10;shot_complete=1;}
 		
 		
 	}

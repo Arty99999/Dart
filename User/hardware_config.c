@@ -71,7 +71,7 @@ void HardwareConfig()
 
 
 	 Motors2006_load_AngelPID.Speed_detach=9000;
-	 Motors2006_load_AngelPID.Speed_detach_Negative=-5000;
+	 Motors2006_load_AngelPID.Speed_detach_Negative=-3500;
 	 
 	 	  BasePID_Init(&Motors6020_pitch_SpeedPID,250,0,0,0);
 	 BasePID_Init(&Motors6020_pitch_AngelPID,6,0.01,0,0);
