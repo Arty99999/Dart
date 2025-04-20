@@ -68,7 +68,7 @@
 	{
 		
 		ET08_DataUnpack(&rc_Ctrl_et, recBuffer, len);  //< callback函数由格式限制
-		rc_Ctrl_et.onlineCheckCnt=0;
+		check_robot_state.usart_state.Check_receiver=0;
 		return 0;
 	}
 /**
@@ -89,6 +89,7 @@ void ET08_online_protection()
 		uint8_t SA,SB,SC,SD;
 		if(recBuffer[0]==0x0f)																																												//< 数据完整性验证 
 		{
+			rc_ctrl->rc.s2_last=rc_ctrl->rc.s2;
 			rc_ctrl->rc.ch0 = (recBuffer[1]>>0| (recBuffer[2] << 8)) & 0x07ff; 																					//< Channel 0   高8位与低3位
 			rc_ctrl->rc.ch1 = ((recBuffer[2] >> 3) | (recBuffer[3] << 5)) & 0x07ff; 																	//< Channel 1   高5位与低6位
 			rc_ctrl->rc.ch2 = ((recBuffer[3] >> 6) | (recBuffer[4] << 2) |(recBuffer[5] << 10)) & 0x07ff; 						//< Channel 2

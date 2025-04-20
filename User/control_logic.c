@@ -78,7 +78,7 @@ static int cnt_up_stop=0,cnt_shoot=0,cnt_yaw_stop=0,cnt_reset=0,cnt_pitch_stop=0
 //			
 //        Motor_Check();
 //		}
-  RobotOnlineState(&check_robot_state, &referee2022, &rc_Ctrl);
+  RobotOnlineState(&check_robot_state, &referee2022, &rc_Ctrl_et);
 	//上堵转
 		if (HAL_GPIO_ReadPin(GPIOE,GPIO_PIN_4)==0) cnt_up_stop++;else cnt_up_stop=0;
 		if (cnt_up_stop>5) {cnt_up_stop=0;flag_stop=1;Target_Angle_3508=motor3508.motor[0].Data.TotalAngle-200;motor3508.motor[0].Data.Target=0;}
@@ -92,44 +92,44 @@ static int cnt_up_stop=0,cnt_shoot=0,cnt_yaw_stop=0,cnt_reset=0,cnt_pitch_stop=0
 				
 				
 
-			if (rc_Ctrl.isOnline==1 && flag_2006==0 &&rc_Ctrl.rc.s2!=2 ) Target_Angle_2006+=(rc_Ctrl.rc.ch3 -1024)* 0.05;
-			if (rc_Ctrl.isOnline==1  &&rc_Ctrl.rc.s2==2 ) 
+			if (rc_Ctrl_et.isOnline==1 && flag_2006==0 &&rc_Ctrl_et.rc.s2!=2 ) Target_Angle_2006+=(rc_Ctrl_et.rc.ch3 -1024)* 0.05;
+			if (rc_Ctrl_et.isOnline==1  &&rc_Ctrl_et.rc.s2==2 ) 
 			{
-				Target_Angle_2006_yaw-=(rc_Ctrl.rc.ch2 -1024)* 0.05;	
-	Target_Angle_2006_pitch-=(rc_Ctrl.rc.ch3 -1024)* 0.05;
+				Target_Angle_2006_yaw-=(rc_Ctrl_et.rc.ch2 -1024)* 0.05;	
+	Target_Angle_2006_pitch-=(rc_Ctrl_et.rc.ch3 -1024)* 0.05;
 			
 			
 			}
-//				if (abs(motor2006.motor[0].Data.Output)>3000&&rc_Ctrl.isOnline==1 )   cnt_2++;else cnt_2=0;
+//				if (abs(motor2006.motor[0].Data.Output)>3000&&rc_Ctrl_et.isOnline==1 )   cnt_2++;else cnt_2=0;
 //			if  (cnt_2>=300)
 //{flag_2006=1;cnt_2=0;Target_Angle_2006=motor2006.motor[0].Data.TotalAngle;}	
 				
-	if  (rc_Ctrl.rc.s1==3) m11=0;
-	else if (rc_Ctrl.rc.s1==2) m11=-6000;
-	else if (rc_Ctrl.rc.s1==1) m11=7000;
+	if  (rc_Ctrl_et.rc.s1==3) m11=0;
+	else if (rc_Ctrl_et.rc.s1==2) m11=-6000;
+	else if (rc_Ctrl_et.rc.s1==1) m11=7000;
 //消堵转	
-	if  (rc_Ctrl.rc.s2==1 && rc_Ctrl.rc.s2_last==3&& flag_stop==1) flag_stop=0;
+	if  (rc_Ctrl_et.rc.s2==1 && rc_Ctrl_et.rc.s2_last==3&& flag_stop==1) flag_stop=0;
 
 	
 
 
 	
-	if    (abs(rc_Ctrl.rc.ch1-1024)>500&& rc_Ctrl.rc.s2==2)  cnt_2006_pitch++; else cnt_2006_pitch=0;
-	if    (abs(rc_Ctrl.rc.ch0-1024)>500&& rc_Ctrl.rc.s2==2)  cnt_2006_yaw++; else cnt_2006_yaw=0;
-	if  (cnt_2006_pitch>=800&&rc_Ctrl.rc.ch1-1024>=0)  {Target_Angle_2006_pitch-=12900;cnt_2006_pitch=0;}
-		if  (cnt_2006_pitch>=800&&rc_Ctrl.rc.ch1-1024<=0)  {Target_Angle_2006_pitch+=12900;cnt_2006_pitch=0;}
+	if    (abs(rc_Ctrl_et.rc.ch1-1024)>500&& rc_Ctrl_et.rc.s2==2)  cnt_2006_pitch++; else cnt_2006_pitch=0;
+	if    (abs(rc_Ctrl_et.rc.ch0-1024)>500&& rc_Ctrl_et.rc.s2==2)  cnt_2006_yaw++; else cnt_2006_yaw=0;
+	if  (cnt_2006_pitch>=800&&rc_Ctrl_et.rc.ch1-1024>=0)  {Target_Angle_2006_pitch-=12900;cnt_2006_pitch=0;}
+		if  (cnt_2006_pitch>=800&&rc_Ctrl_et.rc.ch1-1024<=0)  {Target_Angle_2006_pitch+=12900;cnt_2006_pitch=0;}
 			
-	if  (cnt_2006_yaw>=800&&rc_Ctrl.rc.ch0-1024>=0){Target_Angle_2006_yaw-=3800;cnt_2006_yaw=0;}
-	if  (cnt_2006_yaw>=800&&rc_Ctrl.rc.ch0-1024<=0){Target_Angle_2006_yaw+=3800;cnt_2006_yaw=0;}
+	if  (cnt_2006_yaw>=800&&rc_Ctrl_et.rc.ch0-1024>=0){Target_Angle_2006_yaw-=3800;cnt_2006_yaw=0;}
+	if  (cnt_2006_yaw>=800&&rc_Ctrl_et.rc.ch0-1024<=0){Target_Angle_2006_yaw+=3800;cnt_2006_yaw=0;}
 	
-	if    (abs(rc_Ctrl.rc.ch2-1024)>500&& rc_Ctrl.rc.s2!=2)  cnt_2006++; else cnt_2006=0;
-if  (cnt_2006>=800&&rc_Ctrl.rc.ch2-1024>=0)
+	if    (abs(rc_Ctrl_et.rc.ch2-1024)>500&& rc_Ctrl_et.rc.s2!=2)  cnt_2006++; else cnt_2006=0;
+if  (cnt_2006>=800&&rc_Ctrl_et.rc.ch2-1024>=0)
 {Target_Angle_2006-=3800;cnt_2006=0;}
-else if  (cnt_2006>=800&&rc_Ctrl.rc.ch2-1024<0)
+else if  (cnt_2006>=800&&rc_Ctrl_et.rc.ch2-1024<0)
 	{Target_Angle_2006+=3800;cnt_2006=0;}
 	
 //开关舵机		
-	if    (abs(rc_Ctrl.rc.ch0-1024)>500 && rc_Ctrl.rc.s2!=2)  cnt_shoot++; else cnt_shoot=0;
+	if    (abs(rc_Ctrl_et.rc.ch0-1024)>500 && rc_Ctrl_et.rc.s2!=2)  cnt_shoot++; else cnt_shoot=0;
 	
 if  (cnt_shoot>=1000)
  {
@@ -311,7 +311,7 @@ Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+200000;
         // 其他状态类似...
         case RELOAD_COMPLETE:
             
-//				if (rc_Ctrl.rc.s2 == 1 && rc_Ctrl.rc.s2_last == 3) 
+//				if (rc_Ctrl_et.rc.s2 == 1 && rc_Ctrl_et.rc.s2_last == 3) 
 //				{Reload_mode++;
 //				Reload_state = RELOAD_IDLE;}
 				
@@ -352,7 +352,7 @@ Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+200000;
 					if (flag_completely==1) 		{Reload_mode++;
 		if (Reload_state ==RELOAD_COMPLETE) 
 				Reload_state = RELOAD_STEP1;flag_completely=0;}
-				if (cnt_servo_>1200) {cnt_servo_=0;Rubber_state=Rubber_STEP3;flag_stop=0;}
+				if (cnt_servo_>1500) {cnt_servo_=0;Rubber_state=Rubber_STEP3;flag_stop=0;}
 				
             break;
 
@@ -390,13 +390,13 @@ Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+200000;
 		
 		
 		
-			if(rc_Ctrl.isOnline==0) motor2006.motor[3].Data.Output=0;
+			if(rc_Ctrl_et.isOnline==0) motor2006.motor[3].Data.Output=0;
 			else 			motor2006.motor[3].Data.Output=
 	 BasePID_PitchSpeedControl((BasePID_Object*)(&Motors2006_load_SpeedPID) , 
    BasePID_YawAngleControl((BasePID_Object*)(&Motors2006_load_AngelPID) , Target_Angle_2006_load ,motor2006.motor[3].Data.TotalAngle ),motor2006.motor[3].Data.SpeedRPM);
 			
 						
-		if(rc_Ctrl.isOnline==0 ) motor6020.motor[0].Data.Output=0;
+		if(rc_Ctrl_et.isOnline==0 ) motor6020.motor[0].Data.Output=0;
 			else 			motor6020.motor[0].Data.Output=
 	 BasePID_PitchSpeedControl((BasePID_Object*)(&Motors6020_pitch_SpeedPID) , 
    BasePID_YawAngleControl((BasePID_Object*)(&Motors6020_pitch_AngelPID) , Target_6020 ,motor6020.motor[0].Data.TotalAngle),motor6020.motor[0].Data.SpeedRPM);
@@ -453,16 +453,16 @@ Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+200000;
 //开关舵机				
 
 	
-		if(rc_Ctrl.isOnline != 1)
+		if(rc_Ctrl_et.isOnline != 1)
 	{
-		DR16Init(&rc_Ctrl);
+		ET08Init(&rc_Ctrl_et);
 		flag_stop=0;
 
 		flag_reset=0;
 	}
 	
 	
-	if (rc_Ctrl.isOnline==0) {motor3508.motor[0].Data.Output=0;motor2006.motor[0].Data.Output=0;motor2006.motor[1].Data.Output=0;motor2006.motor[2].Data.Output=0;}
+	if (rc_Ctrl_et.isOnline==0) {motor3508.motor[0].Data.Output=0;motor2006.motor[0].Data.Output=0;motor2006.motor[1].Data.Output=0;motor2006.motor[2].Data.Output=0;}
 Motor* temp_motor ;
 		int k=0;
 for ( i=0;i<check_robot_state.Check_Can1.size_Online;i++)
@@ -619,7 +619,27 @@ uint8_t LCD_callback(uint8_t * recBuffer, uint16_t len)
 		
 		
 		
-	}		
+	}
+	else if (recBuffer[0]==0x55&&recBuffer[1]==0x01 &&recBuffer[2]==0x01 &&recBuffer[3]==0x00) //闸门正在开启
+	{
+//			if (Rubber_state== Rubber_IDLE ||Rubber_state== Rubber_COMPLETE)
+//	{Rubber_state= Rubber_STEP1;flag_stop=0;}
+		
+		
+		
+	}
+		else if (recBuffer[0]==0x55&&recBuffer[1]==0x01 &&recBuffer[2]==0x01 &&recBuffer[3]==0x01) //闸门开启
+	{
+		//if (Rubber_state==Rubber_COMPLETE) {if (flag_shoot==10) flag_shoot=17;else flag_shoot=10;
+		
+		
+		
+	}
+
+
+
+
+	
   //Referee_Data_Diapcak(recBuffer,len);
 	return 0;
 }

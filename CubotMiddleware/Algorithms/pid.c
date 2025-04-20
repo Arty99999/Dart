@@ -1,5 +1,5 @@
 #include<pid.h>
-#include "dr16.h"
+#include "ET08.h"
 #include "driver_timer.h"
 
 
@@ -28,11 +28,11 @@ int32_t BasePID_PitchAngleControl(BasePID_Object* base_pid, float target_angle, 
 	
 	
 	base_pid->KiPartDetachment = 15;
-	if((base_pid->Error > base_pid->KiPartDetachment)||rc_Ctrl.isOnline == 0)
+	if((base_pid->Error > base_pid->KiPartDetachment)||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
-	else if((base_pid->Error < -(base_pid->KiPartDetachment))||rc_Ctrl.isOnline == 0)
+	else if((base_pid->Error < -(base_pid->KiPartDetachment))||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
@@ -95,11 +95,11 @@ int32_t BasePID_AngleControl(BasePID_Object* base_pid, float target_angle, float
 	base_pid->KpPart = base_pid->Error * base_pid->Kp;
 	base_pid->KiPart += base_pid->Error * base_pid->Ki;
 	base_pid->KiPartDetachment = 15;
-	if((base_pid->Error > base_pid->KiPartDetachment)||rc_Ctrl.isOnline == 0)
+	if((base_pid->Error > base_pid->KiPartDetachment)||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
-	else if((base_pid->Error < -(base_pid->KiPartDetachment))||rc_Ctrl.isOnline == 0)
+	else if((base_pid->Error < -(base_pid->KiPartDetachment))||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
@@ -122,11 +122,11 @@ int32_t BasePID_PitchSpeedControl(BasePID_Object* base_pid, float target_speed, 
 	base_pid->KpPart = base_pid->Error * base_pid->Kp;
 	base_pid->KiPart += base_pid->Error * base_pid->Ki;
 	base_pid->KiPartDetachment = 150;
-	if(base_pid->Error > base_pid->KiPartDetachment||rc_Ctrl.isOnline == 0)
+	if(base_pid->Error > base_pid->KiPartDetachment||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
-	else if((base_pid->Error < -base_pid->KiPartDetachment)||rc_Ctrl.isOnline == 0)
+	else if((base_pid->Error < -base_pid->KiPartDetachment)||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
@@ -157,11 +157,11 @@ int32_t BasePID_YawAngleControl(BasePID_Object* base_pid, float target_angle, fl
 	
 	base_pid->KiPart += base_pid->Error * base_pid->Ki;
 	base_pid->KiPartDetachment = 15;
-	if((base_pid->Error > base_pid->KiPartDetachment)||rc_Ctrl.isOnline == 0)
+	if((base_pid->Error > base_pid->KiPartDetachment)||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
-	else if((base_pid->Error < -(base_pid->KiPartDetachment))||rc_Ctrl.isOnline == 0)
+	else if((base_pid->Error < -(base_pid->KiPartDetachment))||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
@@ -182,11 +182,11 @@ int32_t BasePID_YawSpeedControl(BasePID_Object* base_pid, float target_speed, fl
 	base_pid->KpPart = base_pid->Error * base_pid->Kp;
 	base_pid->KiPart += base_pid->Error * base_pid->Ki;
 	base_pid->KiPartDetachment = 150;
-	if(base_pid->Error > base_pid->KiPartDetachment||rc_Ctrl.isOnline == 0)
+	if(base_pid->Error > base_pid->KiPartDetachment||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
-	else if(base_pid->Error < -base_pid->KiPartDetachment||rc_Ctrl.isOnline == 0)
+	else if(base_pid->Error < -base_pid->KiPartDetachment||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
@@ -209,11 +209,11 @@ int32_t BasePID_LiftingSpeedControl(BasePID_Object* base_pid, float target_speed
 	base_pid->KpPart = base_pid->Error * base_pid->Kp;
 	base_pid->KiPart += base_pid->Error * base_pid->Ki;
 	base_pid->KiPartDetachment = 300;
-	if(base_pid->Error > base_pid->KiPartDetachment||rc_Ctrl.isOnline == 0)
+	if(base_pid->Error > base_pid->KiPartDetachment||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
-	else if((base_pid->Error < -base_pid->KiPartDetachment)||rc_Ctrl.isOnline == 0)
+	else if((base_pid->Error < -base_pid->KiPartDetachment)||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
@@ -234,11 +234,11 @@ int32_t BasePID_LiftingAngleControl(BasePID_Object* base_pid, float target_angle
 	base_pid->KpPart = base_pid->Error * base_pid->Kp;
 	base_pid->KiPart += base_pid->Error * base_pid->Ki;
 	base_pid->KiPartDetachment = 300;
-	if(base_pid->Error > base_pid->KiPartDetachment||rc_Ctrl.isOnline == 0)
+	if(base_pid->Error > base_pid->KiPartDetachment||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
-	else if(base_pid->Error < -(base_pid->KiPartDetachment||rc_Ctrl.isOnline == 0))
+	else if(base_pid->Error < -(base_pid->KiPartDetachment||rc_Ctrl_et.isOnline == 0))
 	{
 		base_pid->KiPart = 0;
 	}
@@ -261,11 +261,11 @@ int32_t BasePID_SidewaySpeedControl(BasePID_Object* base_pid, float target_speed
 	base_pid->KpPart = base_pid->Error * base_pid->Kp;
 	base_pid->KiPart += base_pid->Error * base_pid->Ki;
 	base_pid->KiPartDetachment = 150;
-	if(base_pid->Error > base_pid->KiPartDetachment||rc_Ctrl.isOnline == 0)
+	if(base_pid->Error > base_pid->KiPartDetachment||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
-	else if((base_pid->Error < -base_pid->KiPartDetachment)||rc_Ctrl.isOnline == 0)
+	else if((base_pid->Error < -base_pid->KiPartDetachment)||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
@@ -286,11 +286,11 @@ int32_t BasePID_SidewayAngleControl(BasePID_Object* base_pid, float target_angle
 	base_pid->KpPart = base_pid->Error * base_pid->Kp;
 	base_pid->KiPart += base_pid->Error * base_pid->Ki;
 	base_pid->KiPartDetachment = 150;
-	if(base_pid->Error > base_pid->KiPartDetachment||rc_Ctrl.isOnline == 0)
+	if(base_pid->Error > base_pid->KiPartDetachment||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
-	else if(base_pid->Error < -(base_pid->KiPartDetachment||rc_Ctrl.isOnline == 0))
+	else if(base_pid->Error < -(base_pid->KiPartDetachment||rc_Ctrl_et.isOnline == 0))
 	{
 		base_pid->KiPart = 0;
 	}
@@ -313,11 +313,11 @@ int32_t BasePID_mecaSpeedControl(BasePID_Object* base_pid, float target_speed, f
 	base_pid->KpPart = base_pid->Error * base_pid->Kp;
 	base_pid->KiPart += base_pid->Error * base_pid->Ki;
 	base_pid->KiPartDetachment = 150;
-	if(base_pid->Error > base_pid->KiPartDetachment||rc_Ctrl.isOnline == 0)
+	if(base_pid->Error > base_pid->KiPartDetachment||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
-	else if((base_pid->Error < -base_pid->KiPartDetachment)||rc_Ctrl.isOnline == 0)
+	else if((base_pid->Error < -base_pid->KiPartDetachment)||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
@@ -338,11 +338,11 @@ int32_t BasePID_mecaAngleControl(BasePID_Object* base_pid, float target_angle, f
 	base_pid->KpPart = base_pid->Error * base_pid->Kp;
 	base_pid->KiPart += base_pid->Error * base_pid->Ki;
 	base_pid->KiPartDetachment = 150;
-	if(base_pid->Error > base_pid->KiPartDetachment||rc_Ctrl.isOnline == 0)
+	if(base_pid->Error > base_pid->KiPartDetachment||rc_Ctrl_et.isOnline == 0)
 	{
 		base_pid->KiPart = 0;
 	}
-	else if(base_pid->Error < -(base_pid->KiPartDetachment||rc_Ctrl.isOnline == 0))
+	else if(base_pid->Error < -(base_pid->KiPartDetachment||rc_Ctrl_et.isOnline == 0))
 	{
 		base_pid->KiPart = 0;
 	}

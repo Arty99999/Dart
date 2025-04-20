@@ -77,7 +77,7 @@ void HardwareConfig()
 	 BasePID_Init(&Motors6020_pitch_AngelPID,6,0.01,0,0);
 	 Motors6020_pitch_AngelPID.Speed_detach=100;
 	 
-	UARTx_Init(&huart1,DR16_callback);
+	UARTx_Init(&huart1,ET08_callback);
 	UART_ENABLE_IT(&uart1,&uart1_buffer);
 	
 	MotorInit(&motor3508.motor[0], 0, Motor3508, CAN2, 0X203);

@@ -55,7 +55,7 @@ typedef struct
 
 }FPS;
 
-void RobotOnlineState(Check_Robot_State *CheckRobotState, Referee2022 *referee2022,RC_Ctrl *rc_ctrl);
+void RobotOnlineState(Check_Robot_State *CheckRobotState, Referee2022 *referee2022,RC_Ctrl_ET *rc_ctrl);
 void FPS_Check(FPS * fps);
 extern Check_Robot_State check_robot_state;
 extern FPS tim14_FPS;

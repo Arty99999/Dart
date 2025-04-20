@@ -35,7 +35,7 @@ typedef struct{
 	int16_t  AngleSpeed;	  //< 解算后的编码器角速度	
 	int32_t  RoundCnt;			//< 累计转动圈数
 	int32_t  TotalEcd;			//< 编码器累计增量值
-	int32_t  TotalAngle;		//< 累计旋转角度
+	float  TotalAngle;		//< 累计旋转角度
 
 	float  Target;				//< 电机的期望参数
 	int32_t  Output;  			//< 电机输出值，通常为电流和电压	
