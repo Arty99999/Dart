@@ -81,7 +81,7 @@
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
-            <RunUserProg2>0</RunUserProg2>
+            <RunUserProg2>1</RunUserProg2>
             <UserProg1Name></UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
@@ -334,7 +334,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER,STM32H750xx,ARM_MATH_CM7,__CC_ARM,ARM_MATH_MATRIX_CHECK,ARM_MATH_ROUNDING,__TARGET_FPU_VFP,STB_DS_IMPLEMENTATION</Define>
+              <Define>USE_HAL_DRIVER,STM32H743xx,ARM_MATH_CM7,__CC_ARM,ARM_MATH_MATRIX_CHECK,ARM_MATH_ROUNDING,__TARGET_FPU_VFP,STB_DS_IMPLEMENTATION</Define>
               <Undefine></Undefine>
               <IncludePath>../Core/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32H7xx/Include;../Drivers/CMSIS/Include;../CubotMiddleware/dr16;../User;../CubotMiddleware/drivers;../CubotMiddleware/cubotdevice/motor;../CubotMiddleware/Algorithms;../CubotMiddleware/Support;../CubotMiddleware/cubotdevice/check;../CubotMiddleware/cubotdevice;../CubotMiddleware/cubotmodules;../CubotMiddleware/interaction;../CubotMiddleware/referee;../CubotMiddleware/et08</IncludePath>
             </VariousControls>
@@ -469,6 +469,16 @@
               <FileName>driver_iic.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\CubotMiddleware\drivers\driver_iic.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CubotMiddleware\drivers\driver_flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_flash.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\CubotMiddleware\drivers\driver_flash.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -2120,43 +2130,6 @@
         </Group>
         <Group>
           <GroupName>Cubot/modules</GroupName>
-          <Files>
-            <File>
-              <FileName>mecanum_chassis.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\CubotMiddleware\cubotmodules\mecanum_chassis.c</FilePath>
-            </File>
-            <File>
-              <FileName>attitude.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\CubotMiddleware\cubotmodules\attitude.c</FilePath>
-            </File>
-            <File>
-              <FileName>lifting.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\CubotMiddleware\cubotmodules\lifting.c</FilePath>
-            </File>
-            <File>
-              <FileName>ore.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\CubotMiddleware\cubotmodules\ore.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>New Group</GroupName>
-          <Files>
-            <File>
-              <FileName>mpu6050.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\CubotMiddleware\cubotdevice\mpu6050.c</FilePath>
-            </File>
-            <File>
-              <FileName>Gyro.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\CubotMiddleware\cubotdevice\Gyro.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>::CMSIS</GroupName>

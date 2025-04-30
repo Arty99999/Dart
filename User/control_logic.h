@@ -45,7 +45,7 @@ extern uint8_t Auto_state;
 RubberState_t;
 
 uint8_t LCD_callback(uint8_t * recBuffer, uint16_t len);
-
+uint8_t Carema_callback(uint8_t * recBuffer, uint16_t len);
 #endif
 
 

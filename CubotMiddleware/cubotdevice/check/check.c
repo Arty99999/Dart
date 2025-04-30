@@ -57,8 +57,8 @@ void RobotOnlineState(Check_Robot_State *CheckRobotState, Referee2022 *referee20
 			else motor->Data.Online_check.Status=1;
 	}
 
-  Motor_Check(&CheckRobotState->Check_Can1,can1) ;
-  Motor_Check(&CheckRobotState->Check_Can2,can2) ;
+//  Motor_Check(&CheckRobotState->Check_Can1,can1) ;
+//  Motor_Check(&CheckRobotState->Check_Can2,can2) ;
 	
 	CheckRobotState->referee_state.heat          = referee2022->power_heat_data.shooter_id1_17mm_cooling_heat;           //枪口当前热量
 	CheckRobotState->referee_state.heat_limit    = referee2022->game_robot_status.shooter_id1_17mm_cooling_limit;        //枪口热量限制

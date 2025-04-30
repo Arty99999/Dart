@@ -391,7 +391,7 @@ void USART2_IRQHandler(void)
 void USART3_IRQHandler(void)
 {
   /* USER CODE BEGIN USART3_IRQn 0 */
-  UART_Idle_Handler(&uart3,&uart3_buffer);
+ // UART_Idle_Handler(&uart3,&uart3_buffer);
   /* USER CODE END USART3_IRQn 0 */
   HAL_UART_IRQHandler(&huart3);
   /* USER CODE BEGIN USART3_IRQn 1 */
@@ -447,7 +447,7 @@ void DMA1_Stream7_IRQHandler(void)
 void UART4_IRQHandler(void)
 {
   /* USER CODE BEGIN UART4_IRQn 0 */
-  UART_Idle_Handler(&uart4,&uart4_buffer);
+//  UART_Idle_Handler(&uart4,&uart4_buffer);
   /* USER CODE END UART4_IRQn 0 */
   HAL_UART_IRQHandler(&huart4);
   /* USER CODE BEGIN UART4_IRQn 1 */
@@ -587,7 +587,7 @@ void DMA2_Stream7_IRQHandler(void)
 void USART6_IRQHandler(void)
 {
   /* USER CODE BEGIN USART6_IRQn 0 */
-  UART_Idle_Handler(&uart6,&uart6_buffer);
+ // UART_Idle_Handler(&uart6,&uart6_buffer);
   /* USER CODE END USART6_IRQn 0 */
   HAL_UART_IRQHandler(&huart6);
   /* USER CODE BEGIN USART6_IRQn 1 */
@@ -615,7 +615,7 @@ UART_Idle_Handler(&uart7,&uart7_buffer);
 void UART8_IRQHandler(void)
 {
   /* USER CODE BEGIN UART8_IRQn 0 */
-  UART_Idle_Handler(&uart8,&uart8_buffer);
+  //UART_Idle_Handler(&uart8,&uart8_buffer);
   /* USER CODE END UART8_IRQn 0 */
   HAL_UART_IRQHandler(&huart8);
   /* USER CODE BEGIN UART8_IRQn 1 */

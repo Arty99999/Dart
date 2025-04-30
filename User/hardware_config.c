@@ -13,7 +13,7 @@
 #include "Gyro.h"
 #include "mpu6050.h"
 #include "referee.h"
-
+#include "driver_flash.h"
 //#include "referee.h"
 BasePID_Object run_pid;
 BasePID_Object Motors2006_SpeedPID;
@@ -34,7 +34,16 @@ MecanumChassis mecanumchassis;
 Motors motor2006;
 Motors motor6020;
 Motors motor3508;
-
+uint8_t hwt_rec[50]={0};
+uint8_t Camera_rec[50]={0};
+UART_RxBuffer uart7_buffer={
+		.Data = hwt_rec,
+		.Size = 50
+	};
+UART_RxBuffer uart2_buffer={
+		.Data = Camera_rec,
+		.Size = 50
+	};
 extern  ReloadState_t Reload_state;
 uint8_t LCD_callback(uint8_t * recBuffer, uint16_t len);
 void HardwareConfig()
@@ -105,8 +114,8 @@ void HardwareConfig()
 	UART_ENABLE_IT(&uart3,&uart3_buffer);
 	UART_Receive_DMA(&uart3, &uart3_buffer); 
 
-//	UARTx_Init(&huart4,Gyro_callback);
-//	UART_ENABLE_IT(&uart4,&uart4_buffer);
+	UARTx_Init(&huart2,Carema_callback);
+	UART_ENABLE_IT(&uart2,&uart2_buffer);
 //	UART_Receive_DMA(&uart4, &uart4_buffer); 
 	//UARTx_Init(&huart5,Gyro_callback);  //Referee_callback,Brain_callback
 	//UART_ENABLE_IT(&uart5,&uart5_buffer);
@@ -139,10 +148,13 @@ UART_Receive_DMA(&uart1, &uart1_buffer);
 
 	TIMx_Init(&htim13, TIM13_Task);
 	TIM_Open(&tim13);
-
+	
+	
+	
+ //Save_Params(params);
 //	HAL_TIM_Base_Start(&htim4);
 					//UART_Receive_DMA(&uart1, &uart1_buffer);
-					//UART_Receive_DMA(&uart2, &uart2_buffer);
+					UART_Receive_DMA(&uart2, &uart2_buffer);
 //				UART_Receive_DMA(&uart3, &uart3_buffer); 
 					//UART_Receive_DMA(&uart5, &uart5_buffer);
 					//UART_Receive_DMA(&uart3, &uart3_buffer);

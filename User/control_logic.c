@@ -68,11 +68,12 @@ RubberState_t Rubber_state=Rubber_IDLE;
 ReloadState_t Reload_state = RELOAD_IDLE;
 uint16_t cnt6020_down,cnt6020_up,cnt2006_down,cnt2006_up,cnt_servo,cnt_error;
 float Target_6020=-270;
+int cnt_up_stop;
 int Timer=0;
 void TIM14_Task(void)
 {
 	int i;
-static int cnt_up_stop=0,cnt_shoot=0,cnt_yaw_stop=0,cnt_reset=0,cnt_pitch_stop=0,cnt_down_stop;	
+static int cnt_shoot=0,cnt_yaw_stop=0,cnt_reset=0,cnt_pitch_stop=0,cnt_down_stop;	
 	tim14.ClockTime++;
 //		if(tim14.ClockTime%1000==0)
 //		{
@@ -447,7 +448,8 @@ Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+200000;
 	
 	
 	
-	
+	if (rc_Ctrl_et.rc.s2==2) cnt_reset++;else cnt_reset=0;
+	if (cnt_reset>1000) {cnt_reset=0;flag_reset=1;}
 	
 	
 	
@@ -465,44 +467,7 @@ Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+200000;
 	
 	
 	if (rc_Ctrl_et.isOnline==0) {motor3508.motor[0].Data.Output=0;motor2006.motor[0].Data.Output=0;motor2006.motor[1].Data.Output=0;motor2006.motor[2].Data.Output=0;}
-Motor* temp_motor ;
-		int k=0;
-for ( i=0;i<check_robot_state.Check_Can1.size_Online;i++)
-		{
-			temp_motor = MotorFind((check_robot_state.Check_Can1.Online)[i],can1);
-			
-			if (tim14.ClockTime%80==k*5)
-		  UsartDmaPrintf_("离线检测.t%d.txt=\"%x:Online TEMP:%d°\"",k,temp_motor->Param.CanId,temp_motor->Data.Temperature);
-			k++;
-		}
-for (int j=0;j<check_robot_state.Check_Can1.size_Offline;j++)
-		{
-			temp_motor = MotorFind(check_robot_state.Check_Can1.Offline[j],can1);
-			if (tim14.ClockTime%80==k*5)
-		  UsartDmaPrintf_("离线检测.t%d.txt=\"%x:Offline TEMP:Null\"",k,temp_motor->Param.CanId);;
-			k++;
-		}
-		for ( i=0;i<check_robot_state.Check_Can2.size_Online;i++)
-		{
-			temp_motor = MotorFind((check_robot_state.Check_Can2.Online)[i],can2);
-			
-			if (tim14.ClockTime%80==k*5)
-		  UsartDmaPrintf_("离线检测.t%d.txt=\"%x:Online TEMP:%d°\"",k,temp_motor->Param.CanId,temp_motor->Data.Temperature);
-			k++;
-		}
-for (int j=0;j<check_robot_state.Check_Can2.size_Offline;j++)
-		{
-			temp_motor = MotorFind(check_robot_state.Check_Can2.Offline[j],can2);
-			if (tim14.ClockTime%80==k*5)
-		  UsartDmaPrintf_("离线检测.t%d.txt=\"%x:Offline TEMP:Null\"",k,temp_motor->Param.CanId);
-			k++;
-		}
-		if (tim14.ClockTime%80==k*5)
-			UsartDmaPrintf_("改变角度.x1.val=%d",(int) (Yaw*1000));
-		k++;
-				if (tim14.ClockTime%80==k*5)
-			UsartDmaPrintf_("改变角度.x0.val=%d",(int) (Pitch*1000));
-		k++;
+
 //OnlineCheck_Fresh(can2,&check);
 		
 	MotorFillData(&motor3508.motor[0],motor3508.motor[0].Data.Output);
@@ -667,4 +632,22 @@ uint8_t LCD_callback(uint8_t * recBuffer, uint16_t len)
 	
   //Referee_Data_Diapcak(recBuffer,len);
 	return 0;
+}
+float Yaw_add[4],gg=8.9;
+uint8_t m1[4];
+
+// 直接赋值字节数组
+
+
+uint8_t Carema_callback(uint8_t * recBuffer, uint16_t len)
+{
+	if (recBuffer[0]==0xAA&&recBuffer[5]==0xDD)
+	{
+
+
+		memcpy(&Yaw_add,&recBuffer[1],4);
+		
+	}
+	
+	
 }
