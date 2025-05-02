@@ -8,7 +8,7 @@ RC_Ctrl rc_Ctrl={
 };
 
 
-uint8_t DR16_recData[DR16_rxBufferLengh]__attribute__((at(0x24006000)));
+uint8_t DR16_recData[DR16_rxBufferLengh];
 
 
 	UART_RxBuffer uart1_buffer={

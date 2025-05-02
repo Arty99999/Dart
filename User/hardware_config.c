@@ -116,6 +116,7 @@ void HardwareConfig()
 
 	UARTx_Init(&huart2,Carema_callback);
 	UART_ENABLE_IT(&uart2,&uart2_buffer);
+	UART_Receive_DMA(&uart2, &uart2_buffer);
 //	UART_Receive_DMA(&uart4, &uart4_buffer); 
 	//UARTx_Init(&huart5,Gyro_callback);  //Referee_callback,Brain_callback
 	//UART_ENABLE_IT(&uart5,&uart5_buffer);
@@ -154,7 +155,7 @@ UART_Receive_DMA(&uart1, &uart1_buffer);
  //Save_Params(params);
 //	HAL_TIM_Base_Start(&htim4);
 					//UART_Receive_DMA(&uart1, &uart1_buffer);
-					UART_Receive_DMA(&uart2, &uart2_buffer);
+					
 //				UART_Receive_DMA(&uart3, &uart3_buffer); 
 					//UART_Receive_DMA(&uart5, &uart5_buffer);
 					//UART_Receive_DMA(&uart3, &uart3_buffer);

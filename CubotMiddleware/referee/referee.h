@@ -259,7 +259,7 @@ struct
 extern Referee2022 referee2022;
 
 
-extern uint8_t meta_data[BSP_USART3_DMA_RX_BUF_LEN]__attribute__((at(0x24028000)));
+extern uint8_t meta_data[BSP_USART3_DMA_RX_BUF_LEN];
 extern uint8_t bullet_num_17mm,bullet_num_42mm;
 unsigned int Verify_CRC8_Check_Sum(unsigned char *pchMessage, unsigned int dwLength);
 uint32_t Verify_CRC16_Check_Sum(uint8_t *pchMessage, uint32_t dwLength);

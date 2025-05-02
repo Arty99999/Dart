@@ -38,24 +38,24 @@ void RobotOnlineState(Check_Robot_State *CheckRobotState, Referee2022 *referee20
 //		if (motor->Data.Online_check.StatusCnt>=30) {motor->Data.Online_check.StatusCnt=30;motor->Data.Online_check.Status=0;}
 //			else motor->Data.Online_check.Status=1;
 //	}
-		for (node = can2.DevicesList.next;    		//< 对循环链表遍历一圈
-			 node != (can2.DevicesList.prev->next);
-			 node = node->next)
-	{
-		motor = list_entry(node, Motor, list);  //< 输入链表头部所在结点、被嵌入链表的结构体类型、被嵌入链表的结构体类型中链表结点的名称：即可返回嵌入头部所在结点的结构体
-			motor->Data.Online_check.StatusCnt++;
-		if (motor->Data.Online_check.StatusCnt>=30) {motor->Data.Online_check.StatusCnt=30;motor->Data.Online_check.Status=0;}
-			else motor->Data.Online_check.Status=1;
-	}
-	for (node = can1.DevicesList.next;    		//< 对循环链表遍历一圈
-			 node != (can1.DevicesList.prev->next);
-			 node = node->next)
-	{
-		motor = list_entry(node, Motor, list);  //< 输入链表头部所在结点、被嵌入链表的结构体类型、被嵌入链表的结构体类型中链表结点的名称：即可返回嵌入头部所在结点的结构体
-			motor->Data.Online_check.StatusCnt++;
-		if (motor->Data.Online_check.StatusCnt>=30) {motor->Data.Online_check.StatusCnt=30;motor->Data.Online_check.Status=0;}
-			else motor->Data.Online_check.Status=1;
-	}
+//		for (node = can2.DevicesList.next;    		//< 对循环链表遍历一圈
+//			 node != (can2.DevicesList.prev->next);
+//			 node = node->next)
+//	{
+//		motor = list_entry(node, Motor, list);  //< 输入链表头部所在结点、被嵌入链表的结构体类型、被嵌入链表的结构体类型中链表结点的名称：即可返回嵌入头部所在结点的结构体
+//			motor->Data.Online_check.StatusCnt++;
+//		if (motor->Data.Online_check.StatusCnt>=30) {motor->Data.Online_check.StatusCnt=30;motor->Data.Online_check.Status=0;}
+//			else motor->Data.Online_check.Status=1;
+//	}
+//	for (node = can1.DevicesList.next;    		//< 对循环链表遍历一圈
+//			 node != (can1.DevicesList.prev->next);
+//			 node = node->next)
+//	{
+//		motor = list_entry(node, Motor, list);  //< 输入链表头部所在结点、被嵌入链表的结构体类型、被嵌入链表的结构体类型中链表结点的名称：即可返回嵌入头部所在结点的结构体
+//			motor->Data.Online_check.StatusCnt++;
+//		if (motor->Data.Online_check.StatusCnt>=30) {motor->Data.Online_check.StatusCnt=30;motor->Data.Online_check.Status=0;}
+//			else motor->Data.Online_check.Status=1;
+//	}
 
 //  Motor_Check(&CheckRobotState->Check_Can1,can1) ;
 //  Motor_Check(&CheckRobotState->Check_Can2,can2) ;

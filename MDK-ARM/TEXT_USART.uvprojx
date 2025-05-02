@@ -334,7 +334,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER,STM32H743xx,ARM_MATH_CM7,__CC_ARM,ARM_MATH_MATRIX_CHECK,ARM_MATH_ROUNDING,__TARGET_FPU_VFP,STB_DS_IMPLEMENTATION</Define>
+              <Define>USE_HAL_DRIVER,STM32H743xx,ARM_MATH_CM7,__CC_ARM,ARM_MATH_MATRIX_CHECK,ARM_MATH_ROUNDING,__TARGET_FPU_VFP,STB_DS_IMPLEMENTATION,STM32H750xx</Define>
               <Undefine></Undefine>
               <IncludePath>../Core/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32H7xx/Include;../Drivers/CMSIS/Include;../CubotMiddleware/dr16;../User;../CubotMiddleware/drivers;../CubotMiddleware/cubotdevice/motor;../CubotMiddleware/Algorithms;../CubotMiddleware/Support;../CubotMiddleware/cubotdevice/check;../CubotMiddleware/cubotdevice;../CubotMiddleware/cubotmodules;../CubotMiddleware/interaction;../CubotMiddleware/referee;../CubotMiddleware/et08</IncludePath>
             </VariousControls>
@@ -469,16 +469,6 @@
               <FileName>driver_iic.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\CubotMiddleware\drivers\driver_iic.c</FilePath>
-            </File>
-            <File>
-              <FileName>driver_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\CubotMiddleware\drivers\driver_flash.c</FilePath>
-            </File>
-            <File>
-              <FileName>driver_flash.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\CubotMiddleware\drivers\driver_flash.h</FilePath>
             </File>
           </Files>
         </Group>

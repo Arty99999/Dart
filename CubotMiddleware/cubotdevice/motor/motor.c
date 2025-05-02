@@ -241,7 +241,9 @@ Motor* MotorFind(uint16_t canid, CAN_Object canx)
 {
 	Motor* motor = NULL;
 	list_t *node = NULL;	
-	
+	    if (canx.DevicesList.next == NULL || canx.DevicesList.prev == NULL) {
+        return NULL;
+    }
 	for (node = canx.DevicesList.next;    		//< 对循环链表遍历一圈
 			 node != (canx.DevicesList.prev->next);
 			 node = node->next)

@@ -19,6 +19,7 @@
 #include "gyro.h"
 #include "referee.h"
 #include "check.h"
+int  mll=-75;
 uint8_t flag_completely;
 uint8_t cnt_2006_down,cnt_2006_up,cnt_6020_move,cnt_6020_back;
 uint8_t  servo_check_number(uint8_t buf[]);//校验位
@@ -62,8 +63,8 @@ float Yaw,Pitch;
 int b22=80;
 int Target_Angle_2006_load;
 uint8_t Reload_mode;
-
-
+float Yaw_add;
+uint16_t Camera_cnt,Camera_Fps;
 RubberState_t Rubber_state=Rubber_IDLE;
 ReloadState_t Reload_state = RELOAD_IDLE;
 uint16_t cnt6020_down,cnt6020_up,cnt2006_down,cnt2006_up,cnt_servo,cnt_error;
@@ -75,11 +76,12 @@ void TIM14_Task(void)
 	int i;
 static int cnt_shoot=0,cnt_yaw_stop=0,cnt_reset=0,cnt_pitch_stop=0,cnt_down_stop;	
 	tim14.ClockTime++;
-//		if(tim14.ClockTime%1000==0)
-//		{
-//			
-//        Motor_Check();
-//		}
+		if(tim14.ClockTime%1000==0)
+		{
+			Camera_Fps=Camera_cnt;
+        Camera_cnt=0;
+			
+		}
   RobotOnlineState(&check_robot_state, &referee2022, &rc_Ctrl_et);
 	//上堵转
 		if (HAL_GPIO_ReadPin(GPIOE,GPIO_PIN_4)==0) cnt_up_stop++;else cnt_up_stop=0;
@@ -194,8 +196,8 @@ if  (cnt_shoot>=1000)
 			
 			flag_yaw_stop=1;
 			a22=motor2006.motor[1].Data.TotalAngle;
-Target_Angle_2006_yaw=motor2006.motor[1].Data.TotalAngle+391263;
-			
+//Target_Angle_2006_yaw=motor2006.motor[1].Data.TotalAngle+391263;
+			Target_Angle_2006_yaw=motor2006.motor[1].Data.TotalAngle+191263;
 		}
 		
 		
@@ -207,7 +209,7 @@ Target_Angle_2006_yaw=motor2006.motor[1].Data.TotalAngle+391263;
 			cnt_pitch_stop=0;
 			a23=motor2006.motor[1].Data.TotalAngle;
 			flag_pitch_stop=1;
-Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+200000;
+Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+340000;
 			
 		}
 		
@@ -439,8 +441,45 @@ Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+200000;
 	
 	
 	
-	
-	
+//	
+//Motor* temp_motor ;
+//		int k=0;
+//for ( i=0;i<check_robot_state.Check_Can1.size_Online;i++)
+//		{
+//			temp_motor = MotorFind((check_robot_state.Check_Can1.Online)[i],can1);
+//			
+//			if (tim14.ClockTime%80==k*5)
+//		  UsartDmaPrintf_("离线检测.t%d.txt=\"%x:Online TEMP:%d°\"",k,temp_motor->Param.CanId,temp_motor->Data.Temperature);
+//			k++;
+//		}
+//for (int j=0;j<check_robot_state.Check_Can1.size_Offline;j++)
+//		{
+//			temp_motor = MotorFind(check_robot_state.Check_Can1.Offline[j],can1);
+//			if (tim14.ClockTime%80==k*5)
+//		  UsartDmaPrintf_("离线检测.t%d.txt=\"%x:Offline TEMP:Null\"",k,temp_motor->Param.CanId);;
+//			k++;
+//		}
+//		for ( i=0;i<check_robot_state.Check_Can2.size_Online;i++)
+//		{
+//			temp_motor = MotorFind((check_robot_state.Check_Can2.Online)[i],can2);
+//			
+//			if (tim14.ClockTime%80==k*5)
+//		  UsartDmaPrintf_("离线检测.t%d.txt=\"%x:Online TEMP:%d°\"",k,temp_motor->Param.CanId,temp_motor->Data.Temperature);
+//			k++;
+//		}
+//for (int j=0;j<check_robot_state.Check_Can2.size_Offline;j++)
+//		{
+//			temp_motor = MotorFind(check_robot_state.Check_Can2.Offline[j],can2);
+//			if (tim14.ClockTime%80==k*5)
+//		  UsartDmaPrintf_("离线检测.t%d.txt=\"%x:Offline TEMP:Null\"",k,temp_motor->Param.CanId);
+//			k++;
+//		}
+//		if (tim14.ClockTime%80==k*5)
+//			UsartDmaPrintf_("改变角度.x1.val=%d",(int) (Yaw*1000));
+//		k++;
+//				if (tim14.ClockTime%80==k*5)
+//			UsartDmaPrintf_("改变角度.x0.val=%d",(int) (Pitch*1000));
+//		k++;
 	
 	
 	
@@ -462,7 +501,7 @@ Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+200000;
 		ET08Init(&rc_Ctrl_et);
 		flag_stop=0;
 
-		flag_reset=0;
+	//	flag_reset=0;
 	}
 	
 	
@@ -479,8 +518,11 @@ Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+200000;
 	
 	MotorCanOutput(can2, 0x1FF);
 	MotorCanOutput(can1, 0x1FF);
-				
-				
+				if (Yaw_add>(5+mll)&&tim14.ClockTime%500==0&&flag_reset==1&&flag_yaw_stop==1&&rc_Ctrl_et.rc.s2==1)    Target_Angle_2006_yaw+=2000;
+else if (Yaw_add<(-5+mll)&&tim14.ClockTime%500==0&&flag_reset==1&&flag_yaw_stop==1&&rc_Ctrl_et.rc.s2==1) Target_Angle_2006_yaw-=2000;
+else if 	(Yaw_add>(-5+mll)&&Yaw_add<(-2+mll)&&tim14.ClockTime%500==0&&flag_reset==1&&flag_yaw_stop==1&&rc_Ctrl_et.rc.s2==1) Target_Angle_2006_yaw-=500;			
+else if (Yaw_add<(5+mll)&&Yaw_add>(2+mll)&&tim14.ClockTime%500==0&&flag_reset==1&&flag_yaw_stop==1&&rc_Ctrl_et.rc.s2==1) Target_Angle_2006_yaw+=500;		
+		
 				
 				if (shot_complete==1) cnt_complete++;
 					if (cnt_complete>1500) {shot_complete=2;cnt_complete=0;}
@@ -625,16 +667,12 @@ uint8_t LCD_callback(uint8_t * recBuffer, uint16_t len)
 		
 		
 	}
-
-
-
-
 	
   //Referee_Data_Diapcak(recBuffer,len);
 	return 0;
 }
-float Yaw_add[4],gg=8.9;
-uint8_t m1[4];
+
+
 
 // 直接赋值字节数组
 
@@ -643,8 +681,8 @@ uint8_t Carema_callback(uint8_t * recBuffer, uint16_t len)
 {
 	if (recBuffer[0]==0xAA&&recBuffer[5]==0xDD)
 	{
-
-
+		Camera_cnt++;
+    
 		memcpy(&Yaw_add,&recBuffer[1],4);
 		
 	}
