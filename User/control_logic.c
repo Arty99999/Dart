@@ -71,6 +71,7 @@ uint16_t cnt6020_down,cnt6020_up,cnt2006_down,cnt2006_up,cnt_servo,cnt_error;
 float Target_6020=-270;
 int cnt_up_stop;
 int Timer=0;
+float Rubber_Reset_Angel;
 void TIM14_Task(void)
 {
 	int i;
@@ -129,9 +130,9 @@ static int cnt_shoot=0,cnt_yaw_stop=0,cnt_reset=0,cnt_pitch_stop=0,cnt_down_stop
 	
 	if    (abs(rc_Ctrl_et.rc.ch2-1024)>500&& rc_Ctrl_et.rc.s2!=2)  cnt_2006++; else cnt_2006=0;
 if  (cnt_2006>=800&&rc_Ctrl_et.rc.ch2-1024>=0)
-{Target_Angle_2006-=3800;cnt_2006=0;}
+{Target_Angle_2006-=1900;cnt_2006=0;}
 else if  (cnt_2006>=800&&rc_Ctrl_et.rc.ch2-1024<0)
-	{Target_Angle_2006+=3800;cnt_2006=0;}
+	{Target_Angle_2006+=1900;cnt_2006=0;}
 	
 //开关舵机		
 	if    (abs(rc_Ctrl_et.rc.ch0-1024)>500 && rc_Ctrl_et.rc.s2!=2)  cnt_shoot++; else cnt_shoot=0;
@@ -479,12 +480,16 @@ Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+340000;
 //		k++;
 //				if (tim14.ClockTime%80==k*5)
 //			UsartDmaPrintf_("改变角度.x0.val=%d",(int) (Pitch*1000));
-//		k++;
-	
-	
-	
-	
-	
+//		
+	int k=0;
+	if (tim14.ClockTime%80==k*5)
+	UsartDmaPrintf_("视觉校准.n1.val=%d",mll);
+	k++;
+	if (tim14.ClockTime%80==k*5)
+	UsartDmaPrintf_("视觉校准.n0.val=%d",(int)Yaw_add);
+		k++;
+	if (tim14.ClockTime%80==k*5)
+	UsartDmaPrintf_("改变角度.x2.val=%d",(int) ((Rubber_Reset_Angel-motor2006.motor[0].Data.TotalAngle)/100));
 	
 	
 	if (rc_Ctrl_et.rc.s2==2) cnt_reset++;else cnt_reset=0;
@@ -518,12 +523,13 @@ Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+340000;
 	
 	MotorCanOutput(can2, 0x1FF);
 	MotorCanOutput(can1, 0x1FF);
-				if (Yaw_add>(5+mll)&&tim14.ClockTime%500==0&&flag_reset==1&&flag_yaw_stop==1&&rc_Ctrl_et.rc.s2==1)    Target_Angle_2006_yaw+=2000;
+		if (Yaw_add!=0)
+		{	if (Yaw_add>(5+mll)&&tim14.ClockTime%500==0&&flag_reset==1&&flag_yaw_stop==1&&rc_Ctrl_et.rc.s2==1)    Target_Angle_2006_yaw+=2000;
 else if (Yaw_add<(-5+mll)&&tim14.ClockTime%500==0&&flag_reset==1&&flag_yaw_stop==1&&rc_Ctrl_et.rc.s2==1) Target_Angle_2006_yaw-=2000;
 else if 	(Yaw_add>(-5+mll)&&Yaw_add<(-2+mll)&&tim14.ClockTime%500==0&&flag_reset==1&&flag_yaw_stop==1&&rc_Ctrl_et.rc.s2==1) Target_Angle_2006_yaw-=500;			
 else if (Yaw_add<(5+mll)&&Yaw_add>(2+mll)&&tim14.ClockTime%500==0&&flag_reset==1&&flag_yaw_stop==1&&rc_Ctrl_et.rc.s2==1) Target_Angle_2006_yaw+=500;		
 		
-				
+			}	
 				if (shot_complete==1) cnt_complete++;
 					if (cnt_complete>1500) {shot_complete=2;cnt_complete=0;}
 				if (shot_complete==2) {		if (Rubber_state== Rubber_IDLE ||Rubber_state== Rubber_COMPLETE)
@@ -630,7 +636,7 @@ uint8_t LCD_callback(uint8_t * recBuffer, uint16_t len)
 	}
 	else if (recBuffer[0]==0x55&&recBuffer[1]==0x01 &&recBuffer[2]==0x00 &&recBuffer[3]==0x03) //换弹复位
 	{
-		
+		Rubber_Reset_Angel=motor2006.motor[0].Data.TotalAngle;
 		
 		
 		
@@ -667,7 +673,29 @@ uint8_t LCD_callback(uint8_t * recBuffer, uint16_t len)
 		
 		
 	}
-	
+			else if (recBuffer[0]==0x55&&recBuffer[1]==0x01 &&recBuffer[2]==0x02 &&recBuffer[3]==0x00) //视觉标定
+	{
+		
+				if (Yaw_add!=0)
+		{	if (Yaw_add>(5+mll))    Target_Angle_2006_yaw+=2000;
+else if (Yaw_add<(-5+mll)) Target_Angle_2006_yaw-=2000;
+else if 	(Yaw_add>(-5+mll)&&Yaw_add<(-2+mll)) Target_Angle_2006_yaw-=500;			
+else if (Yaw_add<(5+mll)&&Yaw_add>(2+mll)) Target_Angle_2006_yaw+=500;		
+		
+			}	
+	}
+				else if (recBuffer[0]==0x55&&recBuffer[1]==0x01 &&recBuffer[2]==0x02 &&recBuffer[3]==0x01) //视觉偏移++
+	{
+		
+m11+=10;
+	}
+				else if (recBuffer[0]==0x55&&recBuffer[1]==0x01 &&recBuffer[2]==0x02 &&recBuffer[3]==0x02) //视觉偏移--
+	{
+		
+
+		m11-=10;
+				
+	}
   //Referee_Data_Diapcak(recBuffer,len);
 	return 0;
 }
@@ -679,13 +707,20 @@ uint8_t LCD_callback(uint8_t * recBuffer, uint16_t len)
 
 uint8_t Carema_callback(uint8_t * recBuffer, uint16_t len)
 {
-	if (recBuffer[0]==0xAA&&recBuffer[5]==0xDD)
+	if (len==6)
+	{if (recBuffer[0]==0xAA&&recBuffer[5]==0xDD)
 	{
 		Camera_cnt++;
-    
+//    Yaw_add=(float)recBuffer[1];
 		memcpy(&Yaw_add,&recBuffer[1],4);
+//		        uint32_t raw = ((uint32_t)recBuffer[1] << 0)  |
+//                      ((uint32_t)recBuffer[2] << 8)  |
+//                      ((uint32_t)recBuffer[3] << 16) |
+//                      ((uint32_t)recBuffer[4] << 24);
+//        
+//        Yaw_add = *(float*)&raw;
 		
-	}
+	}}
 	
 	
 }
