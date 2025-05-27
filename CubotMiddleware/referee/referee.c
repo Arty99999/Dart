@@ -190,15 +190,16 @@ void _Data_Diapcak(uint8_t *pdata)
 		BYTE3(referee2022.shoot_data.bullet_speed) = *(pdata+data_addr + 6);
 
 	}
-//	if(cmd_id==0x0208)
-//	{
+	if(cmd_id==0x020A)
+	{
+		referee2022.dart_client_cmd.dart_launch_opening_status=*(pdata+data_addr);
 //		BYTE0(bullet_remaining.bullet_remaining_num_17mm) = *(pdata+data_addr);
 //		BYTE1(bullet_remaining.bullet_remaining_num_17mm) = *(pdata+data_addr + 1);
 //		
 //		BYTE0(bullet_remaining.bullet_remaining_num_42mm) = *(pdata+data_addr + 2);
 //		BYTE1(bullet_remaining.bullet_remaining_num_42mm) = *(pdata+data_addr + 3);
 
-//	}
+	}
 	if(cmd_id == 0x0301)
 	{
 		BYTE0(referee2022.ext_student_interactive_header_data.data_cmd_id) = *(pdata+data_addr);

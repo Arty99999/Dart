@@ -109,9 +109,9 @@ void HardwareConfig()
 	//UART_ENABLE_IT(&uart2,&uart2_buffer);
 	//UART_Receive_DMA(&uart2, &uart2_buffer);
 
-//	UARTx_Init(&huart3,Referee_callback);
-//	UART_ENABLE_IT(&uart3,&uart3_buffer);
-//	UART_Receive_DMA(&uart3, &uart3_buffer); 
+	UARTx_Init(&huart3,Referee_callback);
+	UART_ENABLE_IT(&uart3,&uart3_buffer);
+	UART_Receive_DMA(&uart3, &uart3_buffer); 
 
 	UARTx_Init(&huart2,Carema_callback);
 	UART_ENABLE_IT(&uart2,&uart2_buffer);
