@@ -23,8 +23,9 @@
 #define servo_max  20
 
 
-#define servo_yellow_max 535
+#define servo_yellow_max 495
 uint8_t flag_completely;
+uint8_t change_mode=1;
 uint8_t cnt_2006_down,cnt_2006_up,cnt_6020_move,cnt_6020_back;
 uint8_t  servo_check_number(uint8_t buf[]);//校验位
 void servo_move(uint16_t id,uint16_t time,int16_t angle);//位置控制模式
@@ -44,8 +45,7 @@ typedef struct
 }Dart_Info;	
 
 Dart_Info infor[8]={
-	
-{-80,29.288,5},{-90,29.42,3},{-80,29.288,9},{-75,29.323,6},
+{-80,30.802,8},{-98,29.852,7},{-132,30.351,9},{-98,29.999,6},
 		{-80,30.23159,9},
 
 {-50,30.91769,3}
@@ -59,7 +59,7 @@ uint16_t cnt_complete;
 uint8_t flag_pitch_stop=0;
 uint8_t flag_shoot=servo_min;
 //uint8_t flag_shoot=10;
-uint8_t  flag_stop=0,flag_Camera=0;
+uint8_t  flag_stop=0,flag_Camera=1;
 uint8_t  flag_reset=0;
 int cnt_2006_yaw,cnt_2006_pitch;
 int cnt,cnt_2,flag_2006,cnt_2006;
@@ -71,7 +71,7 @@ int cnt_servo_;
 /**
   * @brief  主任务函数
   */
-uint8_t	flag11;
+uint8_t	flag11,flag_wait;
 uint16_t cnt1111;
 float a22,a23;
 
@@ -88,12 +88,15 @@ uint16_t cnt6020_down,cnt6020_up,cnt2006_down,cnt2006_up,cnt_servo,cnt_error;
 float Target_6020=-270;
 int cnt_up_stop;
 int Timer=0;
+int flll;
 float Rubber_Reset_Angel;
 void TIM14_Task(void)
 {
 	int i;
 static int cnt_shoot=0,cnt_yaw_stop=0,cnt_reset=0,cnt_pitch_stop=0,cnt_down_stop;	
 	tim14.ClockTime++;
+	if(tim14.ClockTime==1) Target_Angle_2006=motor2006.motor[0].Data.TotalAngle;
+//	if(tim14.ClockTime%1000==0)
 		if(tim14.ClockTime%1000==0)
 		{
 			Camera_Fps=Camera_cnt;
@@ -128,15 +131,55 @@ static int cnt_shoot=0,cnt_yaw_stop=0,cnt_reset=0,cnt_pitch_stop=0,cnt_down_stop
 				
 	if  (rc_Ctrl_et.rc.s1==3) m11=0;
 	else if (rc_Ctrl_et.rc.s1==2) m11=-5000;
-	else if (rc_Ctrl_et.rc.s1==1) m11=6000;
+	else if (rc_Ctrl_et.rc.s1==1) m11=8000;
 			
 //消堵转	
-	if  (rc_Ctrl_et.rc.s2==1 && rc_Ctrl_et.rc.s2_last==3&& flag_stop==1) flag_stop=0;
+	if  (rc_Ctrl_et.rc.s2==1 && rc_Ctrl_et.rc.s2_last==3&& flag_stop==1&&referee2022.game_status.game_progress!=4) flag_stop=0;
 
+	if (rc_Ctrl_et.rc.s2==1 && rc_Ctrl_et.rc.s2_last==3&&referee2022.game_status.game_progress==4) 
+{
+						mode++;
 	
+//		if (mode==1)	{Target_Angle_2006=Rubber_Reset_Angel-100*(121);;if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
+		if (mode==1)	{Target_Angle_2006_pitch=InversePitchCalculation(infor[0].Pitch_offset)+a23;if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
+		//		if (mode==1)	{if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
+		else if (mode==2) 	
+		{		
+	if (Rubber_state== Rubber_IDLE ||Rubber_state== Rubber_COMPLETE)
+	{Rubber_state= Rubber_STEP1;flag_stop=0;}
+		flag_completely=1;
+		b22=servo_yellow_max;
 
+	}
 
+}
+//if (referee2022.game_status.game_progress==4)
+if (rc_Ctrl_et.rc.s2==2 && rc_Ctrl_et.rc.s2_last==3&&referee2022.game_status.game_progress==4) 
+{
 	
+	
+	
+	flag_wait=1;
+	
+	
+}
+		
+//if (rc_Ctrl_et.rc.s2==2 && rc_Ctrl_et.rc.s2_last==3)
+//	
+//{
+//	flll++;
+//	
+//	
+//}
+rc_Ctrl_et.rc.s2_last=rc_Ctrl_et.rc.s2;
+		rc_Ctrl_et.rc.s1_last=rc_Ctrl_et.rc.s1;
+	if (flag_wait==1&&Rubber_state==Rubber_COMPLETE)
+	{
+								if (mode==1 ) {if (flag_shoot==servo_min) flag_shoot=servo_max;else flag_shoot=servo_min;shot_complete=1;}
+		if (mode==2 ) {if (flag_shoot==servo_min) flag_shoot=servo_max;else flag_shoot=servo_min;shot_complete=1;}
+		flag_wait=0;
+		
+	}
 	if    (abs(rc_Ctrl_et.rc.ch1-1024)>500&& rc_Ctrl_et.rc.s2==2)  cnt_2006_pitch++; else cnt_2006_pitch=0;
 	if    (abs(rc_Ctrl_et.rc.ch0-1024)>500&& rc_Ctrl_et.rc.s2==2)  cnt_2006_yaw++; else cnt_2006_yaw=0;
 	if  (cnt_2006_pitch>=800&&rc_Ctrl_et.rc.ch1-1024>=0)  {Target_Angle_2006_pitch-=12900;cnt_2006_pitch=0;}
@@ -152,7 +195,7 @@ else if  (cnt_2006>=800&&rc_Ctrl_et.rc.ch2-1024<0)
 	{Target_Angle_2006+=1900;cnt_2006=0;}
 	
 //开关舵机		
-	if    (abs(rc_Ctrl_et.rc.ch0-1024)>500 && rc_Ctrl_et.rc.s2!=2)  cnt_shoot++; else cnt_shoot=0;
+	if    (abs(rc_Ctrl_et.rc.ch0-1024)>500 && rc_Ctrl_et.rc.s2!=2&&referee2022.game_status.game_progress!=4)  cnt_shoot++; else cnt_shoot=0;
 	
 if  (cnt_shoot>=1000)
  {
@@ -216,7 +259,7 @@ if  (cnt_shoot>=1000)
 			a22=motor2006.motor[1].Data.TotalAngle;
 //Target_Angle_2006_yaw=motor2006.motor[1].Data.TotalAngle+391263;
 //			Target_Angle_2006_yaw=motor2006.motor[1].Data.TotalAngle+191263;
-						Target_Angle_2006_yaw=motor2006.motor[1].Data.TotalAngle+91263;
+						Target_Angle_2006_yaw=motor2006.motor[1].Data.TotalAngle+111263;
 		}
 		
 		
@@ -228,7 +271,7 @@ if  (cnt_shoot>=1000)
 			cnt_pitch_stop=0;
 			a23=motor2006.motor[2].Data.TotalAngle;
 			flag_pitch_stop=1;
-Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+340000;
+Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+170000;
 			
 		}
 		
@@ -287,7 +330,7 @@ Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+340000;
 
 								
         case RELOAD_STEP2:
-				if 	(abs(motor2006.motor[3].Data.SpeedRPM-Motors2006_load_AngelPID.Out)>50 ) cnt_error++;else cnt_error=0;
+				if 	(abs(motor2006.motor[3].Data.SpeedRPM-Motors2006_load_AngelPID.Out)>200 ) cnt_error++;else cnt_error=0;
 				if (cnt_error>100) Reload_state=RELOAD_ERROR;
 				
             if (abs(Target_Angle_2006_load - motor2006.motor[3].Data.TotalAngle) < 200) 
@@ -366,7 +409,7 @@ Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+340000;
 
         case Rubber_STEP1:
 				{
-					m11=-4000;
+					m11=-5000;
 					if  (flag_stop==1) Rubber_state=Rubber_STEP2;
 				}
                 
@@ -387,11 +430,11 @@ Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+340000;
 
 						    case Rubber_STEP3:
 				if 					(Reload_mode==0)	
-				{m11=5000;
+				{m11=8000;
      if  (flag_stop==1) Rubber_state=Rubber_COMPLETE;}
 				else if (Reload_state ==RELOAD_COMPLETE )
 				{
-					m11=5000;
+					m11=8000;
      if  (flag_stop==1) Rubber_state=Rubber_COMPLETE;
 					
 					
@@ -451,10 +494,20 @@ k++;
 	UsartDmaPrintf_("视觉校准.n0.val=%d",(int)Yaw_add);
 		k++;
 	if (tim14.ClockTime%80==k*5)
-	UsartDmaPrintf_("改变角度.x2.val=%d",(int) ((Rubber_Reset_Angel-motor2006.motor[0].Data.TotalAngle)/100));
+	UsartDmaPrintf_("修改Pitch.x1.val=%d",(int) (1000*infor[0].Pitch_offset));
 	k++;
-	
-	
+		if (tim14.ClockTime%80==k*5)
+	UsartDmaPrintf_("修改Pitch.x2.val=%d",(int) (1000*infor[1].Pitch_offset));
+	k++;
+			if (tim14.ClockTime%80==k*5)
+	UsartDmaPrintf_("修改Pitch.x3.val=%d",(int) (1000*infor[2].Pitch_offset));
+	k++;
+				if (tim14.ClockTime%80==k*5)
+	UsartDmaPrintf_("修改Pitch.x4.val=%d",(int) (1000*infor[3].Pitch_offset));
+	k++;
+					if (tim14.ClockTime%80==k*5)
+	UsartDmaPrintf_("修改Pitch.b2.txt=\"选中: %d\"",(int) (change_mode));
+	k++;
 	if (rc_Ctrl_et.rc.s2==2) cnt_reset++;else cnt_reset=0;
 	if (cnt_reset>1000) {cnt_reset=0;flag_reset=1;}
 	
@@ -502,13 +555,13 @@ k++;
 	MotorCanOutput(can2, 0x1FF);
 	MotorCanOutput(can1, 0x1FF);
 		if (Yaw_add!=0&&flag_Camera==0)
-		{	if (Yaw_add>(5+mll)&&tim14.ClockTime%500==0&&flag_reset==1&&flag_yaw_stop==1&&rc_Ctrl_et.rc.s2==1)    Target_Angle_2006_yaw+=2000;
-else if (Yaw_add<(-5+mll)&&tim14.ClockTime%500==0&&flag_reset==1&&flag_yaw_stop==1&&rc_Ctrl_et.rc.s2==1) Target_Angle_2006_yaw-=2000;
-else if 	(Yaw_add>(-5+mll)&&Yaw_add<(-2+mll)&&tim14.ClockTime%500==0&&flag_reset==1&&flag_yaw_stop==1&&rc_Ctrl_et.rc.s2==1) Target_Angle_2006_yaw-=500;			
-else if (Yaw_add<(5+mll)&&Yaw_add>(2+mll)&&tim14.ClockTime%500==0&&flag_reset==1&&flag_yaw_stop==1&&rc_Ctrl_et.rc.s2==1) Target_Angle_2006_yaw+=500;		}	
+		{	if (Yaw_add>(5+mll)&&tim14.ClockTime%100==0&&flag_reset==1&&flag_yaw_stop==1&&rc_Ctrl_et.rc.s2==1)    Target_Angle_2006_yaw+=2000;
+else if (Yaw_add<(-5+mll)&&tim14.ClockTime%100==0&&flag_reset==1&&flag_yaw_stop==1&&rc_Ctrl_et.rc.s2==1) Target_Angle_2006_yaw-=2000;
+else if 	(Yaw_add>(-5+mll)&&Yaw_add<(-2+mll)&&tim14.ClockTime%100==0&&flag_reset==1&&flag_yaw_stop==1&&rc_Ctrl_et.rc.s2==1) Target_Angle_2006_yaw-=500;			
+else if (Yaw_add<(5+mll)&&Yaw_add>(2+mll)&&tim14.ClockTime%100==0&&flag_reset==1&&flag_yaw_stop==1&&rc_Ctrl_et.rc.s2==1) Target_Angle_2006_yaw+=500;		}	
 	else if (Yaw_add!=0&&flag_Camera==1)
 	{
-		if (tim14.ClockTime%500==0)
+		if (tim14.ClockTime%100==0)
 		{if (Yaw_add>(5+mll))    Target_Angle_2006_yaw+=2000;
 else if (Yaw_add<(-5+mll)) Target_Angle_2006_yaw-=2000;
 else if 	(Yaw_add>(-5+mll)&&Yaw_add<(-2+mll)) Target_Angle_2006_yaw-=500;			
@@ -516,7 +569,7 @@ else if (Yaw_add<(5+mll)&&Yaw_add>(2+mll)) Target_Angle_2006_yaw+=500;
 		}
 	}
 	if (flag_none) cnt__l++;
-	if (cnt__l>=12000) {
+	if (cnt__l>=18000) {
 	
 	
 	cnt__l=0;flag_none=0;
@@ -552,34 +605,36 @@ else if (Yaw_add<(5+mll)&&Yaw_add>(2+mll)) Target_Angle_2006_yaw+=500;
 //			Target_Angle_2006_pitch=kll;
 //		}
 	MotorCanOutput(can2, 0x200);
-		if (Last_dart_launch_opening_status==1&&referee2022.dart_client_cmd.dart_launch_opening_status==2&&referee2022.game_status.stage_remain_time<=400&&referee2022.game_status.game_progress==4)
-		{
-			
-					mode++;
-	
-//		if (mode==1)	{Target_Angle_2006=Rubber_Reset_Angel-100*(121);;if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
-		if (mode==1)	{Target_Angle_2006_pitch=InversePitchCalculation(infor[0].Pitch_offset)+a23;if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
-		//		if (mode==1)	{if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
-		else if (mode==2) 	
-		{		
-	if (Rubber_state== Rubber_IDLE ||Rubber_state== Rubber_COMPLETE)
-	{Rubber_state= Rubber_STEP1;flag_stop=0;}
-		flag_completely=1;
-		b22=servo_yellow_max;
+//		if (Last_dart_launch_opening_status==1&&referee2022.dart_client_cmd.dart_launch_opening_status==2&&referee2022.game_status.stage_remain_time<=400&&referee2022.game_status.game_progress==4)
+//		{
+//			
+//					mode++;
+//	
+////		if (mode==1)	{Target_Angle_2006=Rubber_Reset_Angel-100*(121);;if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
+//		if (mode==1)	{Target_Angle_2006_pitch=InversePitchCalculation(infor[0].Pitch_offset)+a23;if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
+//		//		if (mode==1)	{if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
+//		else if (mode==2) 	
+//		{		
+//	if (Rubber_state== Rubber_IDLE ||Rubber_state== Rubber_COMPLETE)
+//	{Rubber_state= Rubber_STEP1;flag_stop=0;}
+//		flag_completely=1;
+//		b22=servo_yellow_max;
 
-	}
-			
-			
-		}
-		if (Last_dart_launch_opening_status==2&&referee2022.dart_client_cmd.dart_launch_opening_status==0&&referee2022.game_status.stage_remain_time<=400&&referee2022.game_status.game_progress==4)
-		{
-			
-			
-						if (mode==1 &&Rubber_state==Rubber_COMPLETE) {if (flag_shoot==servo_min) flag_shoot=servo_max;else flag_shoot=servo_min;shot_complete=1;}
-		if (mode==2 &&Rubber_state==Rubber_COMPLETE) {if (flag_shoot==servo_min) flag_shoot=servo_max;else flag_shoot=servo_min;shot_complete=1;}
-			
-		}
+//	}
+//			
+//			
+//		}
+//		if (Last_dart_launch_opening_status==2&&referee2022.dart_client_cmd.dart_launch_opening_status==0&&referee2022.game_status.stage_remain_time<=400&&referee2022.game_status.game_progress==4)
+//		{
+//			
+//			
+//						if (mode==1 &&Rubber_state==Rubber_COMPLETE) {if (flag_shoot==servo_min) flag_shoot=servo_max;else flag_shoot=servo_min;shot_complete=1;}
+//		if (mode==2 &&Rubber_state==Rubber_COMPLETE) {if (flag_shoot==servo_min) flag_shoot=servo_max;else flag_shoot=servo_min;shot_complete=1;}
+//			
+//		}
 Last_dart_launch_opening_status=referee2022.dart_client_cmd.dart_launch_opening_status;
+//		rc_Ctrl_et.rc.s2_last=rc_Ctrl_et.rc.s2;
+//		rc_Ctrl_et.rc.s1_last=rc_Ctrl_et.rc.s1;
 }
 
 /**
@@ -715,16 +770,36 @@ else if (Yaw_add<(5+mll)&&Yaw_add>(2+mll)) Target_Angle_2006_yaw+=500;
 				else if (recBuffer[0]==0x55&&recBuffer[1]==0x01 &&recBuffer[2]==0x02 &&recBuffer[3]==0x01) //视觉偏移++
 	{
 		
-mll+=5;
+mll+=2;
 	}
 				else if (recBuffer[0]==0x55&&recBuffer[1]==0x01 &&recBuffer[2]==0x02 &&recBuffer[3]==0x02) //视觉偏移--
 	{
 		
 
-		mll-=5;
+		mll-=2;
 				
 	}
-  //Referee_Data_Diapcak(recBuffer,len);
+					else if (recBuffer[0]==0x55&&recBuffer[1]==0x01 &&recBuffer[2]==0x03 &&recBuffer[3]==0x01) //Pitch++
+	{
+		
+infor[change_mode-1].Pitch_offset+=0.05;
+	
+				
+	}
+					else if (recBuffer[0]==0x55&&recBuffer[1]==0x01 &&recBuffer[2]==0x03 &&recBuffer[3]==0x02) //Pitch--
+	{
+		
+
+	infor[change_mode-1].Pitch_offset-=0.05;
+				
+	}
+					else if (recBuffer[0]==0x55&&recBuffer[1]==0x01 &&recBuffer[2]==0x03 &&recBuffer[3]==0x03) //选择修改镖号
+	{
+		change_mode++;
+		if (change_mode==5) change_mode=1;
+
+				
+	}
 	return 0;
 }
 

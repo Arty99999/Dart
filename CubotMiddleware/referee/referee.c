@@ -193,6 +193,8 @@ void _Data_Diapcak(uint8_t *pdata)
 	if(cmd_id==0x020A)
 	{
 		referee2022.dart_client_cmd.dart_launch_opening_status=*(pdata+data_addr);
+		BYTE0(referee2022.dart_client_cmd.target_change_time)=*(pdata+data_addr+2);
+		BYTE1(referee2022.dart_client_cmd.target_change_time)=*(pdata+data_addr+3);
 //		BYTE0(bullet_remaining.bullet_remaining_num_17mm) = *(pdata+data_addr);
 //		BYTE1(bullet_remaining.bullet_remaining_num_17mm) = *(pdata+data_addr + 1);
 //		

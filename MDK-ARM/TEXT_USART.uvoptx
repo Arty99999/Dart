@@ -278,6 +278,31 @@
           <WinNumber>1</WinNumber>
           <ItemText>Rubber_state,0x0A</ItemText>
         </Ww>
+        <Ww>
+          <count>24</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>referee2022,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>25</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>meta_data,0x10</ItemText>
+        </Ww>
+        <Ww>
+          <count>26</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>mode</ItemText>
+        </Ww>
+        <Ww>
+          <count>27</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>flll,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>28</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>\\TEXT_USART\../CubotMiddleware/referee/referee.c\referee2022.game_status.game_progress</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>

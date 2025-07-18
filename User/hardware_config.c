@@ -79,11 +79,11 @@ void HardwareConfig()
 
 
 	 Motors2006_load_AngelPID.Speed_detach=9000;
-	 Motors2006_load_AngelPID.Speed_detach_Negative=-3500;
+	 Motors2006_load_AngelPID.Speed_detach_Negative=-6500;
 	 
 	 	  BasePID_Init(&Motors6020_pitch_SpeedPID,250,0,0,0);
 	 BasePID_Init(&Motors6020_pitch_AngelPID,6,0.01,0,0);
-	 Motors6020_pitch_AngelPID.Speed_detach=100;
+	 Motors6020_pitch_AngelPID.Speed_detach=96;
 	 
 	UARTx_Init(&huart1,ET08_callback);
 	UART_ENABLE_IT(&uart1,&uart1_buffer);
@@ -142,7 +142,7 @@ UART_Receive_DMA(&uart1, &uart1_buffer);
 
 	CANx_Init(&hfdcan2, CAN2_rxCallBack);
 	CAN_Open(&can2);
-
+HAL_Delay(3000);
 	TIMx_Init(&htim14, TIM14_Task);
 	TIM_Open(&tim14);
 
