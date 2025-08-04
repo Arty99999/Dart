@@ -102,8 +102,6 @@ static int cnt_shoot=0,cnt_yaw_stop=0,cnt_reset=0,cnt_pitch_stop=0,cnt_down_stop
 		mll=infor[0].Yaw_offset;
 	}
 	
-	
-//	if(tim14.ClockTime%1000==0)
 		if(tim14.ClockTime%1000==0)
 		{
 			Camera_Fps=Camera_cnt;
@@ -648,7 +646,6 @@ else if (Yaw_add<(5+mll)&&Yaw_add>(2+mll)) Target_Angle_2006_yaw+=500;
 		{
 			flag_wait=1;
 			
-			
 		}
 			if (flag_wait==1&&Rubber_state==Rubber_COMPLETE)
 	{
@@ -658,8 +655,7 @@ else if (Yaw_add<(5+mll)&&Yaw_add>(2+mll)) Target_Angle_2006_yaw+=500;
 		
 	}
 		Last_dart_launch_opening_status=referee2022.dart_client_cmd.dart_launch_opening_status;
-//		rc_Ctrl_et.rc.s2_last=rc_Ctrl_et.rc.s2;
-//		rc_Ctrl_et.rc.s1_last=rc_Ctrl_et.rc.s1;
+
 }
 
 /**
@@ -705,17 +701,15 @@ void servo_move(uint16_t id,uint16_t time,int16_t angle)//位置控制模式
     buf[9]=servo_check_number(buf);
     HAL_UART_Transmit_DMA(&huart5,(unsigned char*)buf,10);
 }
-void TIM13_Task(void)
+void TIM13_Task(void)//精准控制舵机角度另开的定时器
 {
 			Timer++;
 		if  (Timer<=flag_shoot) HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9, GPIO_PIN_SET);else HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9, GPIO_PIN_RESET);
     if  (Timer==200) Timer=0;
 	
-	
-	
 }
 
-uint8_t LCD_callback(uint8_t * recBuffer, uint16_t len)
+uint8_t LCD_callback(uint8_t * recBuffer, uint16_t len) //测试用LCD 含多种功能
 {
 	if (recBuffer[0]==0x55&&recBuffer[1]==0x01 &&recBuffer[2]==0x00 &&recBuffer[3]==0x01) //换弹
 	{
@@ -741,27 +735,17 @@ uint8_t LCD_callback(uint8_t * recBuffer, uint16_t len)
 	else if (recBuffer[0]==0x55&&recBuffer[1]==0x01 &&recBuffer[2]==0x00 &&recBuffer[3]==0x03) //换弹复位
 	{
 		Rubber_Reset_Angel=motor2006.motor[0].Data.TotalAngle;
-		
-		
-		
 	}	
 	else if (recBuffer[0]==0x55&&recBuffer[1]==0x01 &&recBuffer[2]==0x00 &&recBuffer[3]==0x04) //Yaw Pitch 复位
 	{
-		
-		
 		flag_reset=1;
-		
-		
-		
 	}
 	
 	else if (recBuffer[0]==0x55&&recBuffer[1]==0x01 &&recBuffer[2]==0x01 &&recBuffer[3]==0x00) //闸门正在开启
 	{
 		mode++;
 		flag_none=1;
-//		if (mode==1)	{Target_Angle_2006=Rubber_Reset_Angel-100*(121);;if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
 		if (mode==1)	{Target_Angle_2006_pitch=InversePitchCalculation(infor[0].Pitch_offset)+a23;if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
-		//		if (mode==1)	{if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
 		else if (mode==2) 	
 		{		
 	if (Rubber_state== Rubber_IDLE ||Rubber_state== Rubber_COMPLETE)
@@ -828,29 +812,17 @@ infor[change_mode-1].Pitch_offset+=0.05;
 	return 0;
 }
 
-
-
-// 直接赋值字节数组
-
-
 uint8_t Carema_callback(uint8_t * recBuffer, uint16_t len)
 {
 	if (len==6)
 	{if (recBuffer[0]==0xAA&&recBuffer[5]==0xDD)
 	{
 		Camera_cnt++;
-//    Yaw_add=(float)recBuffer[1];
+
 		memcpy(&Yaw_add,&recBuffer[1],4);
-//		        uint32_t raw = ((uint32_t)recBuffer[1] << 0)  |
-//                      ((uint32_t)recBuffer[2] << 8)  |
-//                      ((uint32_t)recBuffer[3] << 16) |
-//                      ((uint32_t)recBuffer[4] << 24);
-//        
-//        Yaw_add = *(float*)&raw;
 		
-	}}
-	
-	
+	}
+	}
 }
 float InversePitchCalculation(float Pitch) {
     const float A = 543.13405f;
@@ -869,40 +841,3 @@ float InversePitchCalculation(float Pitch) {
     
     return motor_angle;
 }
-
-
-
-	
-//	
-//Motor* temp_motor ;
-//		int k=0;
-//for ( i=0;i<check_robot_state.Check_Can1.size_Online;i++)
-//		{
-//			temp_motor = MotorFind((check_robot_state.Check_Can1.Online)[i],can1);
-//			
-//			if (tim14.ClockTime%80==k*5)
-//		  UsartDmaPrintf_("离线检测.t%d.txt=\"%x:Online TEMP:%d°\"",k,temp_motor->Param.CanId,temp_motor->Data.Temperature);
-//			k++;
-//		}
-//for (int j=0;j<check_robot_state.Check_Can1.size_Offline;j++)
-//		{
-//			temp_motor = MotorFind(check_robot_state.Check_Can1.Offline[j],can1);
-//			if (tim14.ClockTime%80==k*5)
-//		  UsartDmaPrintf_("离线检测.t%d.txt=\"%x:Offline TEMP:Null\"",k,temp_motor->Param.CanId);;
-//			k++;
-//		}
-//		for ( i=0;i<check_robot_state.Check_Can2.size_Online;i++)
-//		{
-//			temp_motor = MotorFind((check_robot_state.Check_Can2.Online)[i],can2);
-//			
-//			if (tim14.ClockTime%80==k*5)
-//		  UsartDmaPrintf_("离线检测.t%d.txt=\"%x:Online TEMP:%d°\"",k,temp_motor->Param.CanId,temp_motor->Data.Temperature);
-//			k++;
-//		}
-//for (int j=0;j<check_robot_state.Check_Can2.size_Offline;j++)
-//		{
-//			temp_motor = MotorFind(check_robot_state.Check_Can2.Offline[j],can2);
-//			if (tim14.ClockTime%80==k*5)
-//		  UsartDmaPrintf_("离线检测.t%d.txt=\"%x:Offline TEMP:Null\"",k,temp_motor->Param.CanId);
-//			k++;
-//		}
