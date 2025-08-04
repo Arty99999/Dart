@@ -45,12 +45,13 @@ typedef struct
 }Dart_Info;	
 
 Dart_Info infor[8]={
-{-80,30.802,8},{-98,29.852,7},{-132,30.351,9},{-98,29.999,6},
-		{-80,30.23159,9},
+{-215,29.595,8},{-146,29.202,1},{-232,29.722,4},{-198,29.585,2},
+{-80,30.23159,9},
 
 {-50,30.91769,3}
 };
-int  mll=-80;
+//int  mll=infor[0].Yaw_offset;
+int  mll=0;
 uint8_t Last_dart_launch_opening_status;
 int m11;  
 float kll;
@@ -92,10 +93,16 @@ int flll;
 float Rubber_Reset_Angel;
 void TIM14_Task(void)
 {
+	
 	int i;
 static int cnt_shoot=0,cnt_yaw_stop=0,cnt_reset=0,cnt_pitch_stop=0,cnt_down_stop;	
 	tim14.ClockTime++;
-	if(tim14.ClockTime==1) Target_Angle_2006=motor2006.motor[0].Data.TotalAngle;
+	if(tim14.ClockTime==1) 
+	{Target_Angle_2006=motor2006.motor[0].Data.TotalAngle;
+		mll=infor[0].Yaw_offset;
+	}
+	
+	
 //	if(tim14.ClockTime%1000==0)
 		if(tim14.ClockTime%1000==0)
 		{
@@ -173,13 +180,13 @@ if (rc_Ctrl_et.rc.s2==2 && rc_Ctrl_et.rc.s2_last==3&&referee2022.game_status.gam
 //}
 rc_Ctrl_et.rc.s2_last=rc_Ctrl_et.rc.s2;
 		rc_Ctrl_et.rc.s1_last=rc_Ctrl_et.rc.s1;
-	if (flag_wait==1&&Rubber_state==Rubber_COMPLETE)
-	{
-								if (mode==1 ) {if (flag_shoot==servo_min) flag_shoot=servo_max;else flag_shoot=servo_min;shot_complete=1;}
-		if (mode==2 ) {if (flag_shoot==servo_min) flag_shoot=servo_max;else flag_shoot=servo_min;shot_complete=1;}
-		flag_wait=0;
-		
-	}
+//	if (flag_wait==1&&Rubber_state==Rubber_COMPLETE)
+//	{
+//								if (mode==1 ) {if (flag_shoot==servo_min) flag_shoot=servo_max;else flag_shoot=servo_min;shot_complete=1;}
+//		if (mode==2 ) {if (flag_shoot==servo_min) flag_shoot=servo_max;else flag_shoot=servo_min;shot_complete=1;}
+//		flag_wait=0;
+//		
+//	}
 	if    (abs(rc_Ctrl_et.rc.ch1-1024)>500&& rc_Ctrl_et.rc.s2==2)  cnt_2006_pitch++; else cnt_2006_pitch=0;
 	if    (abs(rc_Ctrl_et.rc.ch0-1024)>500&& rc_Ctrl_et.rc.s2==2)  cnt_2006_yaw++; else cnt_2006_yaw=0;
 	if  (cnt_2006_pitch>=800&&rc_Ctrl_et.rc.ch1-1024>=0)  {Target_Angle_2006_pitch-=12900;cnt_2006_pitch=0;}
@@ -210,9 +217,9 @@ if  (cnt_shoot>=1000)
 //		flag_yaw_stop=1;
 //		flag_pitch_stop=1;
 
-				if(abs(motor3508.motor[0].Data.Target-motor3508.motor[0].Data.SpeedRPM)>250 && flag_stop==0)//堵转判断
+				if(abs(motor3508.motor[0].Data.Target-motor3508.motor[0].Data.SpeedRPM)>350 && flag_stop==0)//堵转判断
 					cnt_down_stop++;else cnt_down_stop=0;
-				if(cnt_down_stop>=50)
+				if(cnt_down_stop>=200)
 				{
 					cnt_down_stop=0;
 					Target_Angle_3508=motor3508.motor[0].Data.TotalAngle+100;
@@ -220,8 +227,20 @@ if  (cnt_shoot>=1000)
 					motor3508.motor[0].Data.Target=0;
           
 				}
+//				if(abs(motor3508.motor[0].Data.Target-motor3508.motor[0].Data.SpeedRPM)>350 && flag_stop==0)//堵转判断
+//				cnt_down_stop++;else cnt_down_stop=0;
+//				if(cnt_down_stop>=200)
+//				{
+//					cnt_down_stop=0;
+//					Target_Angle_3508=motor3508.motor[0].Data.TotalAngle+100;
+//					flag_stop=1;
+//					motor3508.motor[0].Data.Target=0;//加入判断上下
+//          
+//				}
 
-
+				
+				
+				
 	if (flag_reset==1)  
 	{
 	motor2006.motor[1].Data.Target=-4000;	
@@ -430,11 +449,11 @@ Target_Angle_2006_pitch=motor2006.motor[2].Data.TotalAngle+170000;
 
 						    case Rubber_STEP3:
 				if 					(Reload_mode==0)	
-				{m11=8000;
+				{m11=6000;
      if  (flag_stop==1) Rubber_state=Rubber_COMPLETE;}
 				else if (Reload_state ==RELOAD_COMPLETE )
 				{
-					m11=8000;
+					m11=6000;
      if  (flag_stop==1) Rubber_state=Rubber_COMPLETE;
 					
 					
@@ -586,7 +605,7 @@ else if (Yaw_add<(5+mll)&&Yaw_add>(2+mll)) Target_Angle_2006_yaw+=500;
 				
 	if (shot_complete==3 && Rubber_state==Rubber_COMPLETE&& Reload_state ==RELOAD_COMPLETE) {if (flag_shoot==servo_min) flag_shoot=servo_max;else flag_shoot=servo_min;shot_complete=0;}
 				
-				
+		
 		if (tim14.ClockTime%30==0)
 		servo_move(0xFE,100,b22);
 	//Usart1DmaPrintf("%d,%d,%d\r\n",motor6020.motor[0].Data.RawEcd,motor6020.motor[0].Data.LastEcd,motor6020.motor[0].Data.RoundCnt);
@@ -605,34 +624,40 @@ else if (Yaw_add<(5+mll)&&Yaw_add>(2+mll)) Target_Angle_2006_yaw+=500;
 //			Target_Angle_2006_pitch=kll;
 //		}
 	MotorCanOutput(can2, 0x200);
-//		if (Last_dart_launch_opening_status==1&&referee2022.dart_client_cmd.dart_launch_opening_status==2&&referee2022.game_status.stage_remain_time<=400&&referee2022.game_status.game_progress==4)
-//		{
-//			
-//					mode++;
-//	
-////		if (mode==1)	{Target_Angle_2006=Rubber_Reset_Angel-100*(121);;if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
-//		if (mode==1)	{Target_Angle_2006_pitch=InversePitchCalculation(infor[0].Pitch_offset)+a23;if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
-//		//		if (mode==1)	{if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
-//		else if (mode==2) 	
-//		{		
-//	if (Rubber_state== Rubber_IDLE ||Rubber_state== Rubber_COMPLETE)
-//	{Rubber_state= Rubber_STEP1;flag_stop=0;}
-//		flag_completely=1;
-//		b22=servo_yellow_max;
+		if (Last_dart_launch_opening_status==1&&referee2022.dart_client_cmd.dart_launch_opening_status==2&&referee2022.game_status.stage_remain_time<=400&&referee2022.game_status.game_progress==4)
+		{
+			
+					mode++;
+	
+//		if (mode==1)	{Target_Angle_2006=Rubber_Reset_Angel-100*(121);;if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
+		if (mode==1)	{Target_Angle_2006_pitch=InversePitchCalculation(infor[0].Pitch_offset)+a23;if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
+		//		if (mode==1)	{if (Rubber_state== Rubber_IDLE) {Rubber_state= Rubber_STEP1;flag_stop=0;}}
+		else if (mode==2) 	
+		{		
+	if (Rubber_state== Rubber_IDLE ||Rubber_state== Rubber_COMPLETE)
+	{Rubber_state= Rubber_STEP1;flag_stop=0;}
+		flag_completely=1;
+		b22=servo_yellow_max;
 
-//	}
-//			
-//			
-//		}
-//		if (Last_dart_launch_opening_status==2&&referee2022.dart_client_cmd.dart_launch_opening_status==0&&referee2022.game_status.stage_remain_time<=400&&referee2022.game_status.game_progress==4)
-//		{
-//			
-//			
-//						if (mode==1 &&Rubber_state==Rubber_COMPLETE) {if (flag_shoot==servo_min) flag_shoot=servo_max;else flag_shoot=servo_min;shot_complete=1;}
-//		if (mode==2 &&Rubber_state==Rubber_COMPLETE) {if (flag_shoot==servo_min) flag_shoot=servo_max;else flag_shoot=servo_min;shot_complete=1;}
-//			
-//		}
-Last_dart_launch_opening_status=referee2022.dart_client_cmd.dart_launch_opening_status;
+	}
+			
+			
+		}
+		
+		if (Last_dart_launch_opening_status==2&&referee2022.dart_client_cmd.dart_launch_opening_status==0&&referee2022.game_status.stage_remain_time<=400&&referee2022.game_status.game_progress==4)
+		{
+			flag_wait=1;
+			
+			
+		}
+			if (flag_wait==1&&Rubber_state==Rubber_COMPLETE)
+	{
+								if (mode==1 ) {if (flag_shoot==servo_min) flag_shoot=servo_max;else flag_shoot=servo_min;shot_complete=1;}
+		if (mode==2 ) {if (flag_shoot==servo_min) flag_shoot=servo_max;else flag_shoot=servo_min;shot_complete=1;}
+		flag_wait=0;
+		
+	}
+		Last_dart_launch_opening_status=referee2022.dart_client_cmd.dart_launch_opening_status;
 //		rc_Ctrl_et.rc.s2_last=rc_Ctrl_et.rc.s2;
 //		rc_Ctrl_et.rc.s1_last=rc_Ctrl_et.rc.s1;
 }

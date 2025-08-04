@@ -303,6 +303,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>\\TEXT_USART\../CubotMiddleware/referee/referee.c\referee2022.game_status.game_progress</ItemText>
         </Ww>
+        <Ww>
+          <count>29</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>m11</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
